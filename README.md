@@ -21,4 +21,12 @@ Compiling your file
 ```bash
 g++ YourExeName -o folderName/LivelyML/src/LinearModels.cpp YourFileName.cpp
 ```
+Executing your file
+```bash
+./YourExeName
+```
+
+## Feedback
+
+If you have any feedback, please reach out to us at dhakalmanish398@gmail.com
 
