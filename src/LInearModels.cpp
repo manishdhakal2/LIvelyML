@@ -1,39 +1,42 @@
 #include<iostream>
 #include<vector>
 #include <cstdlib>
+#include "../include/LinearModels.hpp"
 
-class LinearRegression{
-    public:
-        float lr; // The Learning Rate
-        int epoch; // No. of epochs
-        
-        std::vector<double> y,w,b; // Y- Target variable , W- Weight matrix, B- Bias Matrix
-        std::vector<std::vector<double>> x;// The feature space
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------//
         // Constructor 
-        LinearRegression(float lr,int epochs){
+        LinearRegression::LinearRegression(double lr,int epochs){
             this->lr=lr;
             this->epoch=epochs;
-            this->init_weights();
         }
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------//
-        void init_weights(){
+        void LinearRegression::init_weights(){
             this->w.clear();
-            this->b.clear();
+            this->b=0;
 
             // Random initialization for random weights
             for (int i=0;i<this->x[0].size();i++){
 
-                this->w.push_back((std::rand()) / RAND_MAX);
-                this->b.push_back(0); // all zeros for bias
+                this->w.push_back((std::rand()) / RAND_MAX); 
+
 
             }
 
+
+
+        }
+
+        double LinearRegression::MSE(std::vector<double> y,std::vector <double> y_pred){
+            double error=0;
+            for(int i=0;i<y.size();i++){
+                error+=(y_pred[i]-y[i])*(y_pred[i]-y[i]);
+            }
+            return error;
         }
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------//
         // Calculates the Matrix Multiplication of 2d with 1d vector
 
-        std::vector <double> dotProduct(std::vector<std::vector<double>> x,std::vector<double> y){
+        std::vector <double> LinearRegression::dotProduct(std::vector<std::vector<double>> x,std::vector<double> y){
             std::vector<double> result(y.size());
             double sum;
             for(int i=0;i<x.size();i++){
@@ -46,7 +49,7 @@ class LinearRegression{
             return result; 
         }
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------//
-        void fit(std::vector<std::vector<double>> x,std::vector <double> y){ 
+        void LinearRegression::fit(std::vector<std::vector<double>> x,std::vector <double> y){ 
             this->x=x;
             this->init_weights();
             this->y=y;
@@ -55,9 +58,15 @@ class LinearRegression{
 
             std::vector <double> y_pred(this->x.size());
             std::vector<double> dW(this->w.size());
-            std::vector<double> dB(this->b.size());
+            double dB=0;
 
             for (int i=0;i<this->epoch;i++){
+
+                if(i%100==0){
+                    std::cout<<"Epoch "<<i<<std::endl;
+                    std::cout<<"Training Loss "<<this->MSE(y_pred,this->y)<<std::endl;
+                }
+                dB=0;
 
                 y_pred=this->predict(this->x);
                 for (int i=0;i<this->y.size();i++){
@@ -65,14 +74,18 @@ class LinearRegression{
                 }
 
                 dW=this->dotProduct(this->x,y_pred);
-                dB=y_pred;
+                for(int i=0;i<y_pred.size();i++){
+                    dB+=y_pred[i];
+                }
+                dB=dB*(-2)/this->x[0].size();
+                this->b-=(this->lr*dB);
 
                 for (int i=0;i<dW.size();i++){
                     dW[i]=dW[i]*(-2)/this->x[0].size();
 
                     this->w[i]-=(this->lr*dW[i]);
-                    dB[i]=dB[i]*(-2)/this->x[0].size();
-                    this->w[i]-=(this->lr*dB[i]);
+                    
+                    
 
                 }
 
@@ -81,15 +94,15 @@ class LinearRegression{
 
         }
   //-----------------------------------------------------------------------------------------------------------------------------------------------------------------//      
-         std::vector <double> predict(std::vector<std::vector<double>> x){
+         std::vector <double> LinearRegression::predict(std::vector<std::vector<double>> x){
+
             std::vector<double> result(x.size());
             for(int i=0;i<x.size();i++){
                 for(int j=0;j<x[0].size();j++){
                     result[i]+=x[i][j]*this->w[j];
                 }
-                result[i]+=this->b[i];
+                result[i]+=this->b;
             }
             return result;
         }
-};
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------//
