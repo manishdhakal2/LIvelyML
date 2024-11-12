@@ -19,15 +19,11 @@
 
                 this->w.push_back((std::rand()) / RAND_MAX); 
 
-
             }
-
-
-
         }
 
         double LinearRegression::MSE(std::vector<double> y,std::vector <double> y_pred){
-            double error=0;
+            double error=0.0;
             for(int i=0;i<y.size();i++){
                 error+=(y_pred[i]-y[i])*(y_pred[i]-y[i]);
             }
