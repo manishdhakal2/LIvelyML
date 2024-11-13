@@ -91,7 +91,7 @@ void MinMaxScaler::fit( std::vector<std::vector<double>> x){
 
 std::vector<std::vector<double>> MinMaxScaler::transform(std::vector<std::vector<double>> x){
     std::vector<std::vector<double>> result(x.size(),std::vector<double>(x[0].size()));
-    const double epsilon=1e-8; //Small Value for negating zerodivisionerror
+    const double epsilon=1e-8; //Small Value for negating zero division error
     
     for(int i=0;i<x.size();i++){
         for(int j=0;j<x[0].size();j++){
